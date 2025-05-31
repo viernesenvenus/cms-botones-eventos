@@ -1844,76 +1844,93 @@
         return;
       }
 
-      // Generar header del evento para desktop - exactamente como la previsualización
-      const desktopEventHeader = `
-    <div class="tmpe-event-header-desktop">
-      <div class="tmpe-event-title-line">
-        <div class="tmpe-evento-en-container">
-          <span class="tmpe-evento-en-text">EVENTO EN</span>
-        </div>
-        <span class="tmpe-location-text">SAO PAULO, ESTADIO MORIMBUS</span>
-      </div>
-      <div class="tmpe-date-container">
-        <img src="https://prod-assets.tmlat.com/Group_1321317495_447c543c40.svg" alt="Icono calendario" class="tmpe-calendar-icon-desktop">
-        <span class="tmpe-date-text-header">16 NOV 2025</span>
-      </div>
-    </div>`;
-
-      // Generar header del evento para mobile - exactamente como la previsualización
-      const mobileEventHeader = `
-    <div class="tmpe-event-header-mobile">
-      <div class="tmpe-event-title-line">
-        <div class="tmpe-evento-en-container">
-          <span class="tmpe-evento-en-text">EVENTO EN</span>
-        </div>
-        <span class="tmpe-location-text">SAO PAULO, ESTADIO MORIMBUS</span>
-      </div>
-      <div class="tmpe-date-container">
-        <img src="https://prod-assets.tmlat.com/Group_1321317495_447c543c40.svg" alt="Icono calendario" class="tmpe-calendar-icon-mobile">
-        <span class="tmpe-date-text-header">16 NOV 2025</span>
-      </div>
-    </div>`;
-
-      // Generar botones para desktop
+      // Generar botones para desktop y mobile usando la nueva estructura
       let desktopButtonsHTML = '';
       let mobileButtonsHTML = '';
       
       buttons.forEach(button => {
+        // Determinar logo URL y clase según tipo
+        let logoUrl, logoClass;
+        if (button.type === 'custom') {
+          logoUrl = button.customLogoUrl || 'https://via.placeholder.com/56x56/000000/FFFFFF?text=LOGO';
+          logoClass = 'tmpe-logo-custom';
+        } else if (button.type === 'interbank') {
+          logoUrl = 'https://prod-assets.tmlat.com/interbank_svg_f81dc84322.svg';
+          logoClass = 'tmpe-logo-interbank';
+        } else if (button.type === 'ticketmaster') {
+          logoUrl = 'https://prod-assets.tmlat.com/T_9318699a9f.svg';
+          logoClass = 'tmpe-logo-ticketmaster';
+        }
+
+        // Mapeo de estados
         const statusConfig = {
-          available: { text: 'DISPONIBLE', dotClass: 'tmpe-dot-available', buttonClass: 'available' },
-          soon: { text: 'PRÓXIMAMENTE', dotClass: 'tmpe-dot-soon', buttonClass: 'soon' },
-          soldout: { text: 'AGOTADO', dotClass: 'tmpe-dot-soldout', buttonClass: 'disabled' },
-          canceled: { text: 'CANCELADO', dotClass: 'tmpe-dot-canceled', buttonClass: 'canceled' }
+          available: { text: 'DISPONIBLE', dot: 'tmpe-dot-available' },
+          soon: { text: 'PRÓXIMAMENTE', dot: 'tmpe-dot-soon' },
+          soldout: { text: 'AGOTADO', dot: 'tmpe-dot-soldout' },
+          canceled: { text: 'CANCELADO', dot: 'tmpe-dot-canceled' }
         };
 
         const currentStatus = statusConfig[button.status];
         
-        // Determinar logo URL y clase
-      let logoUrl, logoClass;
-        if (button.type === 'custom') {
-          logoUrl = button.customLogoUrl || 'https://via.placeholder.com/56x56';
-          logoClass = 'tmpe-logo-custom';
-        } else if (button.type === 'interbank') {
-        logoUrl = 'https://prod-assets.tmlat.com/interbank_svg_f81dc84322.svg';
-        logoClass = 'tmpe-logo-interbank';
-        } else if (button.type === 'ticketmaster') {
-        logoUrl = 'https://prod-assets.tmlat.com/T_9318699a9f.svg';
-        logoClass = 'tmpe-logo-ticketmaster';
-        }
-      
-      // Generar botón desktop según estado
-      let desktopButton;
+        // Generar botón desktop según estado
+        let desktopButton;
         if (button.status === 'soon') {
-        desktopButton = '<div class="tmpe-link-reminder"><img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);">Recordármelo</div>';
+          desktopButton = `<div class="tmpe-link-reminder">
+            <img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);">
+            Recordármelo
+          </div>`;
         } else if (button.status === 'canceled') {
-          desktopButton = `<a href="${button.link}" class="tmpe-link-details" style="background: white; color: #024DDF; border: 1px solid #024DDF;">${button.buttonText}<svg width="20" height="20" viewBox="0 0 20 20"><polyline points="7 5 13 10 7 15" fill="none" stroke="#024DDF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`;
+          desktopButton = `<a href="${button.link}" class="tmpe-link-details" style="background: white; color: #024DDF; border: 1px solid #024DDF;">
+            ${button.buttonText}
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <polyline points="7 5 13 10 7 15" fill="none" stroke="#024DDF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>`;
         } else if (button.status === 'soldout') {
-          desktopButton = `<a href="${button.link}" class="tmpe-link-details" style="background: #EBEBEB; color: #949494; cursor: not-allowed;">${button.buttonText}<svg width="20" height="20" viewBox="0 0 20 20"><polyline points="7 5 13 10 7 15" fill="none" stroke="#949494" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`;
-      } else {
-          desktopButton = `<a href="${button.link}" class="tmpe-link-details">${button.buttonText}<svg width="20" height="20" viewBox="0 0 20 20"><polyline points="7 5 13 10 7 15" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`;
+          desktopButton = `<a href="${button.link}" class="tmpe-link-details" style="background: #EBEBEB; color: #949494; cursor: not-allowed;">
+            ${button.buttonText}
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <polyline points="7 5 13 10 7 15" fill="none" stroke="#949494" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>`;
+        } else {
+          desktopButton = `<a href="${button.link}" class="tmpe-link-details">
+            ${button.buttonText}
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <polyline points="7 5 13 10 7 15" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>`;
         }
         
+        // Generar botón móvil según estado
+        let mobileButton;
+        if (button.status === 'soon') {
+          mobileButton = `<div class="tmpe-link-mobile" style="background: #FFF; border: 0.818px solid #D6D6D6; border-radius: 350px; box-shadow: 0px 4.909px 9.818px 0px rgba(0, 0, 0, 0.06);">
+            <img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);">
+          </div>`;
+        } else if (button.status === 'canceled') {
+          mobileButton = `<div class="tmpe-link-mobile" style="background: white; border: 1px solid #024DDF;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9 6L15 12L9 18" stroke="#024DDF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>`;
+        } else if (button.status === 'soldout') {
+          mobileButton = `<div class="tmpe-link-mobile" style="background: #949494;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>`;
+        } else {
+          mobileButton = `<div class="tmpe-link-mobile">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>`;
+        }
+      
+        // Generar HTML para desktop
         desktopButtonsHTML += `
+    <!-- ${button.title} -->
     <div class="tmpe-ticket-item">
       <div class="tmpe-logo-container ${logoClass}">
         <img class="tmpe-logo-img" src="${logoUrl}" alt="Logo">
@@ -1922,470 +1939,377 @@
         <h2 class="tmpe-ticket-title">${button.title}</h2>
         <div class="tmpe-status-container">
           <div class="tmpe-status-badge">
-            <span class="tmpe-status-dot ${currentStatus.dotClass}"></span>
+            <span class="tmpe-status-dot ${currentStatus.dot}"></span>
             <span>${currentStatus.text}</span>
           </div>
-          <span class="tmpe-date-text">Desde ${button.date}</span>
+          <span class="tmpe-date-text">Inicio de venta: ${button.date}</span>
         </div>
       </div>
       ${desktopButton}
     </div>`;
       
-      // Generar botón móvil según estado
-      let mobileButton;
-        if (button.status === 'soon') {
-        mobileButton = '<div class="tmpe-link-mobile" style="background: #FFF; border: 0.818px solid #D6D6D6; border-radius: 350px; box-shadow: 0px 4.909px 9.818px 0px rgba(0, 0, 0, 0.06);"><img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);"></div>';
-        } else if (button.status === 'canceled') {
-        mobileButton = '<div class="tmpe-link-mobile" style="background: white; border: 1px solid #024DDF;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="#024DDF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
-        } else if (button.status === 'soldout') {
-        mobileButton = '<div class="tmpe-link-mobile" style="background: #949494;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
-      } else {
-        mobileButton = '<div class="tmpe-link-mobile"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
-      }
+        // Generar HTML para móvil
+        const mobileWrapper = button.status === 'soon' ? 
+          `<div class="tmpe-ticket-link" style="cursor: default;">` : 
+          `<a href="${button.link}" class="tmpe-ticket-link">`;
+        const mobileWrapperClose = button.status === 'soon' ? `</div>` : `</a>`;
 
         mobileButtonsHTML += `
+    <!-- ${button.title} -->
     <div class="tmpe-ticket-item">
-      ${button.status === 'soon' ? 
-        `<div class="tmpe-ticket-link" style="cursor: default;">` : 
-        `<a href="${button.link}" class="tmpe-ticket-link">`
-      }
+      ${mobileWrapper}
         <div class="tmpe-logo-container ${logoClass}">
           <img class="tmpe-logo-img" src="${logoUrl}" alt="Logo">
         </div>
         <div class="tmpe-info-container">
           <h2 class="tmpe-ticket-title">${button.title}</h2>
           <div class="tmpe-status-container">
-            <span class="tmpe-date-text">Desde ${button.date}</span>
+            <span class="tmpe-date-text">Inicio de venta ${button.date}</span>
             <div class="tmpe-status-badge">
-              <span class="tmpe-status-dot ${currentStatus.dotClass}"></span>
+              <span class="tmpe-status-dot ${currentStatus.dot}"></span>
               <span>${currentStatus.text}</span>
             </div>
           </div>
         </div>
         ${mobileButton}
-      ${button.status === 'soon' ? '</div>' : '</a>'}
+      ${mobileWrapperClose}
     </div>`;
       });
+
+      // CSS completo basado en index5.html
+      const cssStyles = `/* CSS Reset básico */
+.tmpe-container * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.tmpe-container {
+  width: 800px !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  background: #FAFBFC;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+@media (max-width: 800px) {
+  .tmpe-container {
+    width: 100% !important;
+  }
+}
+
+/* Default state - Desktop first */
+.tmpe-desktop-view {
+  display: block;
+}
+
+.tmpe-mobile-view {
+  display: none;
+}
+
+/* Tarjetas de ticket - Desktop */
+.tmpe-ticket-item {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  background: #fff;
+  border-bottom: 1px solid #D6D6D6;
+  position: relative;
+  justify-content: space-between;
+  gap: 24px;
+  transition: background-color 0.2s ease;
+}
+
+.tmpe-logo-container {
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tmpe-logo-interbank {
+  background: #1A1A1A;
+}
+
+.tmpe-logo-ticketmaster {
+  background: #0744BD;
+}
+
+.tmpe-logo-custom {
+  background: #000000;
+}
+
+.tmpe-logo-img {
+  width: 65%;
+  height: 65%;
+  object-fit: contain;
+}
+
+.tmpe-info-container {
+  flex: 1;
+}
+
+/* Tipografía directamente aplicada con alta especificidad */
+.tmpe-container .tmpe-ticket-title {
+  font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #262626;
+  letter-spacing: 0.4px;
+  line-height: 20px;
+}
+
+.tmpe-container .tmpe-date-text {
+  font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #7D7D7D;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.32px;
+  line-height: 20px;
+}
+
+.tmpe-status-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tmpe-container .tmpe-status-badge {
+  font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #D6D6D6;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  height: 22px;
+  letter-spacing: 0.24px;
+  line-height: 20px;
+}
+
+.tmpe-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.tmpe-dot-available {
+  background: #048851;
+}
+
+.tmpe-dot-soon {
+  background: #646464;
+}
+
+.tmpe-dot-soldout {
+  background: #DD2C00;
+}
+
+.tmpe-dot-canceled {
+  background: #646464;
+}
+
+/* Estilo de enlace según diseño */
+.tmpe-container .tmpe-link-details {
+  font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: #024DDF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 16px 40px;
+  font-size: 16px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-left: auto;
+  text-decoration: none;
+  letter-spacing: 0.32px;
+  line-height: 24px;
+  height: 48px;
+  min-width: 150px;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.tmpe-link-reminder {
+  background: #FFFFFF;
+  color: #646464;
+  border: 1px solid #D6D6D6;
+  border-radius: 23px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  margin-left: auto;
+  text-decoration: none;
+  box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.06);
+  height: 39px;
+  min-width: auto;
+  justify-content: center;
+  font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.tmpe-link-mobile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #024DDF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .tmpe-desktop-view {
+    display: none;
+  }
+  
+  .tmpe-mobile-view {
+    display: block;
+    box-shadow: 0px 1px 4px 0px rgba(18, 18, 18, 0.15);
+  }
+  
+  .tmpe-ticket-item {
+    padding: 0;
+    gap: 0;
+    align-items: stretch;
+  }
+  
+  .tmpe-ticket-link {
+    display: flex;
+    width: 100%;
+    padding: 20px 12px;
+    gap: 16px;
+    align-items: flex-start;
+    text-decoration: none !important;
+    color: inherit;
+    cursor: pointer;
+  }
+  
+  .tmpe-logo-container {
+    width: 42px;
+    height: 40px;
+    margin-right: 0;
+    border-radius: 2.68px;
+    margin-top: 0;
+    align-self: flex-start;
+  }
+  
+  .tmpe-container .tmpe-ticket-title {
+    font-size: 18px;
+    line-height: 20px;
+    letter-spacing: 0.32px;
+    color: #121212;
+    margin-bottom: 2px;
+  }
+
+  .tmpe-container .tmpe-date-text {
+    font-size: 14px;
+    margin-left: 0;
+    line-height: 20px;
+    letter-spacing: 0.28px;
+    color: #828282;
+  }
+  
+  .tmpe-status-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .tmpe-container .tmpe-status-badge {
+    font-size: 12px;
+    letter-spacing: 0.24px;
+    line-height: 20px;
+    color: #121212;
+  }
+
+  .tmpe-link-mobile {
+    width: 36px;
+    height: 36px;
+    background: #024DDF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    margin-top: 0;
+  }
+}
+
+/* Desktop hover effect */
+@media (min-width: 769px) {
+  .tmpe-ticket-item:hover {
+    background-color: #F6F6F6;
+  }
+  
+  .tmpe-link-details:hover {
+    background-color: #0035A0;
+  }
+}
+
+/* Mobile hover/active effects */
+@media (max-width: 768px) {
+  .tmpe-ticket-link:hover, 
+  .tmpe-ticket-link:active {
+    background-color: #F6F6F6;
+  }
+  
+  .tmpe-ticket-link:hover .tmpe-link-mobile, 
+  .tmpe-ticket-link:active .tmpe-link-mobile {
+    background-color: #0035A0;
+  }
+}`;
 
       const fullCode = `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Botones de Venta</title>
+  <title>Botones de Venta - Interface</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background: #e2e2e2;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0;
-    }
-
-    .tmpe-desktop-view {
-      display: block;
-    }
-
-    .tmpe-mobile-view {
-      display: none;
-    }
-
-    .tmpe-event-header-desktop {
-      width: 800px;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 12px 0px;
-      text-align: center;
-      border-bottom: 1px solid #D6D6D6;
-      background: #ffffff;
-    }
-
-    .tmpe-event-header-mobile {
-      width: 380px;
-      max-width: 380px;
-      margin: 0 auto;
-      padding: 12px 0px;
-      text-align: center;
-      border-bottom: 1px solid #D6D6D6;
-      background: #ffffff;
-    }
-
-    .tmpe-event-title-line {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .tmpe-evento-en-container {
-      position: relative;
-      display: inline-block;
-    }
-
-    .tmpe-evento-en-container::before {
-      content: "";
-      position: absolute;
-      top: -4px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: #121212;
-    }
-
-    .tmpe-evento-en-text {
-      font-size: 20px;
-      font-weight: 700;
-      color: #121212;
-      text-transform: uppercase;
-      letter-spacing: 2%;
-      line-height: 1.2em;
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-
-    .tmpe-location-text {
-      font-size: 20px;
-      font-weight: 700;
-      color: #646464;
-      letter-spacing: 2%;
-      line-height: 1.2em;
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      text-transform: uppercase;
-    }
-
-    .tmpe-date-container {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: flex-start;
-    }
-
-    .tmpe-calendar-icon-desktop {
-      width: 16px;
-      height: 16px;
-    }
-
-    .tmpe-calendar-icon-mobile {
-      width: 14px;
-      height: 14px;
-    }
-
-    .tmpe-date-text-header {
-      font-size: 18px;
-      font-weight: 600;
-      color: #646464;
-      margin: 0;
-      text-align: left;
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-
-    .tmpe-ticket-item {
-      display: flex;
-      align-items: center;
-      padding: 20px 24px;
-      background: #fff;
-      border-bottom: 1px solid #D6D6D6;
-      position: relative;
-      justify-content: space-between;
-      gap: 24px;
-      transition: background-color 0.2s ease;
-      width: 800px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .tmpe-logo-container {
-      width: 56px;
-      height: 56px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .tmpe-logo-interbank {
-      background: #1A1A1A;
-    }
-
-    .tmpe-logo-ticketmaster {
-      background: #0744BD;
-    }
-
-    .tmpe-logo-custom {
-      background: #000000;
-    }
-
-    .tmpe-logo-img {
-      width: 65%;
-      height: 65%;
-      object-fit: contain;
-    }
-
-    .tmpe-info-container {
-      flex: 1;
-    }
-
-    .tmpe-ticket-title {
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-size: 20px;
-      font-style: normal;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #262626;
-      letter-spacing: 0.4px;
-      line-height: 20px;
-    }
-
-    .tmpe-date-text {
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      color: #7D7D7D;
-      font-size: 16px;
-      font-weight: 400;
-      letter-spacing: 0.32px;
-      line-height: 20px;
-    }
-
-    .tmpe-status-container {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tmpe-status-badge {
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      border: 1px solid #D6D6D6;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      height: 22px;
-      letter-spacing: 0.24px;
-      line-height: 20px;
-    }
-
-    .tmpe-status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-
-    .tmpe-dot-available {
-      background: #048851;
-    }
-
-    .tmpe-dot-soon {
-      background: #646464;
-    }
-
-    .tmpe-dot-soldout {
-      background: #DD2C00;
-    }
-
-    .tmpe-dot-canceled {
-      background: #646464;
-    }
-
-    .tmpe-link-details {
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: #024DDF;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 16px 40px;
-      font-size: 16px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      margin-left: auto;
-      text-decoration: none;
-      letter-spacing: 0.32px;
-      line-height: 24px;
-      height: 48px;
-      min-width: 150px;
-      justify-content: center;
-      transition: background-color 0.2s ease;
-    }
-
-    .tmpe-link-reminder {
-      background: #FFFFFF;
-      color: #646464;
-      border: 1px solid #D6D6D6;
-      border-radius: 23px;
-      padding: 6px 12px;
-      font-size: 14px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      margin-left: auto;
-      text-decoration: none;
-      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.06);
-      height: 39px;
-      min-width: auto;
-      justify-content: center;
-      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-
-    .tmpe-link-mobile {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #024DDF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      cursor: pointer;
-      color: white;
-      text-decoration: none;
-      transition: background-color 0.2s ease;
-    }
-
-    @media (max-width: 768px) {
-      .tmpe-desktop-view {
-        display: none;
-      }
-
-      .tmpe-mobile-view {
-        display: block;
-      }
-
-      .tmpe-evento-en-container::before {
-        top: -3px;
-        height: 1.5px;
-      }
-
-      .tmpe-evento-en-text {
-        font-size: 14px;
-      }
-
-      .tmpe-location-text {
-        font-size: 14px;
-      }
-
-      .tmpe-date-text-header {
-        font-size: 14px;
-      }
-
-      .tmpe-ticket-item {
-        padding: 0;
-        gap: 0;
-        align-items: stretch;
-        width: 380px;
-        max-width: 380px;
-      }
-
-      .tmpe-ticket-link {
-        display: flex;
-        width: 100%;
-        padding: 20px 12px;
-        gap: 16px;
-        align-items: flex-start;
-        text-decoration: none !important;
-        color: inherit;
-        cursor: pointer;
-      }
-
-      .tmpe-logo-container {
-        width: 42px;
-        height: 40px;
-        margin-right: 0;
-        border-radius: 2.68px;
-        margin-top: 0;
-        align-self: flex-start;
-      }
-
-      .tmpe-ticket-title {
-        font-size: 18px;
-        line-height: 20px;
-        letter-spacing: 0.32px;
-        color: #121212;
-        margin-bottom: 2px;
-      }
-
-      .tmpe-date-text {
-        font-size: 14px;
-        margin-left: 0;
-        line-height: 20px;
-        letter-spacing: 0.28px;
-        color: #828282;
-      }
-
-      .tmpe-status-container {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-      }
-
-      .tmpe-status-badge {
-        font-size: 12px;
-        letter-spacing: 0.24px;
-        line-height: 20px;
-        color: #121212;
-      }
-
-      .tmpe-link-mobile {
-        width: 36px;
-        height: 36px;
-        background: #024DDF;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        align-self: flex-start;
-        margin-top: 0;
-      }
-    }
-
-    @media (min-width: 769px) {
-      .tmpe-ticket-item:hover {
-        background-color: #F6F6F6;
-      }
-
-      .tmpe-link-details:hover {
-        background-color: #0035A0;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .tmpe-ticket-link:hover,
-      .tmpe-ticket-link:active {
-        background-color: #F6F6F6;
-      }
-
-      .tmpe-ticket-link:hover .tmpe-link-mobile,
-      .tmpe-ticket-link:active .tmpe-link-mobile {
-        background-color: #0035A0;
-      }
-    }
+    ${cssStyles}
   </style>
 </head>
 <body>
+
+<div class="tmpe-container">
+  <!-- Vista Desktop -->
   <div class="tmpe-desktop-view">
-${desktopEventHeader}
 ${desktopButtonsHTML}
   </div>
+  
+  <!-- Vista Mobile -->
   <div class="tmpe-mobile-view">
-${mobileEventHeader}
 ${mobileButtonsHTML}
   </div>
+</div>
+
 </body>
 </html>`;
 
@@ -2395,3 +2319,4 @@ ${mobileButtonsHTML}
   </script>
 </body>
 </html> 
+</html> // VERIFICACION: Cambios aplicados - Fri May 30 19:29:26 -05 2025
