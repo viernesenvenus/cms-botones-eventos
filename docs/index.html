@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Botones de Venta</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #262626;
+      background: linear-gradient(135deg, #024DDF, #0066FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+
+    /* Títulos de la interfaz CMS */
+    .cms-title {
+      font-size: 20px;
+      margin-bottom: 24px;
+      color: #1a1a1a;
+      font-weight: 700;
+      margin-top: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .cms-panel-title {
+      margin-top: 0;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      font-size: 18px;
+      color: #1a1a1a;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    /* Layout de dos columnas */
+    .main-layout {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+    }
+
+    .editor-column {
+      flex: 0 0 32%;
+      min-width: 300px;
+    }
+
+    .preview-column {
+      flex: 1;
+      min-width: 420px;
+    }
+
+    h2 {
+      /* Sin estilos generales para evitar interferencia con botones */
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* Botones CMS */
+    .cms-button {
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .cms-button-primary {
+      background: #024DDF;
+      color: white;
+      min-height: 48px;
+      font-size: 16px;
+      padding: 12px 32px;
+    }
+
+    .cms-button-primary:hover {
+      background: #0239c4;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(2, 77, 223, 0.3);
+    }
+
+    .cms-button-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(2, 77, 223, 0.2);
+    }
+
+    .cms-button-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .cms-button-secondary {
+      background: #f8fafc;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+      font-weight: 600;
+    }
+
+    .cms-button-secondary:hover {
+      background: #e2e8f0;
+      color: #2d3748;
+      border-color: #cbd5e0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cms-button-success {
+      background: #048851;
+      color: white;
+    }
+
+    .cms-button-danger {
+      background: #DD2C00;
+      color: white;
+    }
+
+    .cms-button-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Hover effects */
+    .cms-button:hover {
+      opacity: 0.9;
+    }
+
+    .cms-button:active {
+      transform: scale(0.97);
+    }
+
+    /* Panel CMS */
+    .cms-panel {
+      background: #ffffff;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.06);
+      padding: 24px;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+      border: 1px solid #f0f0f0;
+    }
+
+    .cms-panel h2 {
+      /* Removido para evitar interferencia con títulos de botones */
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2d3748;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #ffffff;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #024DDF;
+      box-shadow: 0 0 0 3px rgba(2, 77, 223, 0.1);
+      background: #fafbfc;
+    }
+
+    .form-group select:hover,
+    .form-group input:hover,
+    .form-group textarea:hover {
+      border-color: #cbd5e0;
+    }
+
+    .form-group input[type="url"] {
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+      font-size: 13px;
+      background: #f8fafc;
+      letter-spacing: 0.02em;
+    }
+
+    .form-group input[type="url"]:focus {
+      background: #ffffff;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-col {
+      flex: 1;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #024DDF;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .preview-container {
+      margin-top: 0;
+      border: 1px solid #f0f0f0;
+      padding: 24px;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .preview-container h2 {
+      /* Removido para evitar interferencia con títulos de botones */
+    }
+
+    /* Estilos para la visualización de botones de ventas */
+    .tmpe-ticket-item {
+      display: flex;
+      align-items: center;
+      padding: 20px 24px;
+      background: #fff;
+      border-bottom: 1px solid #D6D6D6;
+      position: relative;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .tmpe-logo-container {
+      width: 56px;
+      height: 56px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .tmpe-logo-interbank {
+      background: #1A1A1A;
+    }
+
+    .tmpe-logo-ticketmaster {
+      background: #0744BD;
+    }
+
+    .tmpe-logo-img {
+      width: 65%;
+      height: 65%;
+      object-fit: contain;
+    }
+
+    .tmpe-info-container {
+      flex: 1;
+    }
+
+    .tmpe-ticket-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #262626;
+      letter-spacing: 0.4px;
+      line-height: 20px;
+    }
+
+    .tmpe-date-text {
+      color: #7D7D7D;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0.32px;
+      line-height: 20px;
+    }
+
+    .tmpe-status-container {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tmpe-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid #D6D6D6;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      height: 22px;
+      letter-spacing: 0.24px;
+      line-height: 20px;
+    }
+
+    .tmpe-status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .tmpe-dot-available {
+      background: #048851;
+    }
+
+    .tmpe-dot-soon {
+      background: #646464;
+    }
+    
+    .tmpe-dot-soldout {
+      background: #DD2C00;
+    }
+    
+    .tmpe-dot-canceled {
+      background: #646464;
+    }
+
+    .tmpe-link-details {
+      background: #024DDF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 16px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-left: auto;
+      text-decoration: none;
+      letter-spacing: 0.32px;
+      line-height: 24px;
+      height: 48px;
+      min-width: 150px;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    /* Estados del botón */
+    .tmpe-link-details.available {
+      background: #024DDF;
+      color: white;
+      border: none;
+    }
+
+    .tmpe-link-details.canceled {
+      background: white;
+      color: #024DDF;
+      border: 1px solid #024DDF;
+    }
+
+    .tmpe-link-details.disabled {
+      background: #EBEBEB;
+      color: #949494;
+      border: none;
+      cursor: not-allowed;
+    }
+
+    /* Botón especial "Recordármelo" para estado próximamente - Según diseño Figma */
+    .tmpe-link-reminder {
+      background: #FFFFFF;
+      color: #646464;
+      border: 1px solid #D6D6D6;
+      border-radius: 23px;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      margin-left: auto;
+      text-decoration: none;
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.06);
+      height: 39px;
+      min-width: auto;
+      justify-content: center;
+      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    .tmpe-link-reminder:hover {
+      background: #f5f5f5;
+    }
+
+    .tmpe-link-reminder .bell-icon {
+      width: 16px;
+      height: 16px;
+      fill: #646464;
+    }
+
+    /* Estados del botón móvil */
+    .tmpe-link-mobile {
+      width: 36px;
+      height: 36px;
+      background: #024DDF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-start;
+      margin-top: 0;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
+
+    .tmpe-link-mobile.available {
+      background: #024DDF;
+      border: none;
+    }
+
+    .tmpe-link-mobile.canceled {
+      background: white;
+      border: 1px solid #024DDF;
+    }
+
+    .tmpe-link-mobile.disabled {
+      background: #949494;
+      border: none;
+    }
+
+    .tmpe-link-mobile.soon {
+      background: #FFF;
+      border: 0.818px solid #D6D6D6;
+      border-radius: 350px;
+      box-shadow: 0px 4.909px 9.818px 0px rgba(0, 0, 0, 0.06);
+    }
+
+    .tmpe-link-mobile.canceled svg path {
+      stroke: #024DDF;
+    }
+
+    .tmpe-link-mobile.disabled svg path {
+      stroke: white;
+    }
+
+    /* Fondo gris para la vista previa */
+    .preview-background {
+      background-color: #e2e2e2;
+      padding: 20px;
+      border-radius: 4px;
+    }
+
+    /* Controles de visualización */
+    .view-controls {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .view-toggle {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .view-toggle-btn {
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #64748b;
+      transition: all 0.2s ease;
+      min-width: 100px;
+      justify-content: center;
+    }
+
+    .view-toggle-btn:hover {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .view-toggle-btn.active {
+      background: #024DDF;
+      color: white;
+      box-shadow: 0 2px 4px rgba(2, 77, 223, 0.2);
+    }
+
+    /* Vista móvil - Estilos adaptados de index4.html */
+    .preview-mobile {
+      max-width: 360px;
+      margin: 0 auto;
+      box-shadow: 0px 1px 4px 0px rgba(18, 18, 18, 0.15);
+    }
+
+    .preview-mobile .tmpe-ticket-item {
+      padding: 0;
+      gap: 0;
+      align-items: stretch;
+    }
+    
+    .tmpe-ticket-link {
+      display: flex;
+      width: 100%;
+      padding: 20px 12px;
+      gap: 16px;
+      align-items: flex-start;
+      text-decoration: none !important;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .preview-mobile .tmpe-logo-container {
+      width: 42px;
+      height: 40px;
+      margin-right: 0;
+      border-radius: 2.68px;
+      margin-top: 0;
+      align-self: flex-start;
+    }
+
+    .preview-mobile .tmpe-info-container {
+      width: 100%;
+    }
+
+    .preview-mobile .tmpe-ticket-title {
+      font-size: 16px;
+      line-height: 20px;
+      letter-spacing: 0.32px;
+      color: #121212;
+      margin-bottom: 2px;
+      font-weight: 700;
+    }
+    
+    .preview-mobile .tmpe-date-text {
+      font-size: 14px;
+      margin-left: 0;
+      line-height: 20px;
+      letter-spacing: 0.28px;
+      color: #828282;
+    }
+
+    .preview-mobile .tmpe-status-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .preview-mobile .tmpe-status-badge {
+      font-size: 12px;
+      letter-spacing: 0.24px;
+      line-height: 20px;
+      color: #121212;
+    }
+    
+    .tmpe-link-mobile {
+      width: 36px;
+      height: 36px;
+      background: #024DDF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-start;
+      margin-top: 0;
+    }
+
+    /* Estilos para la subida de imágenes */
+    .image-upload {
+      border: 2px dashed #cbd5e0;
+      padding: 24px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      position: relative;
+      background: #f8fafc;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .image-upload:hover {
+      border-color: #024DDF;
+      background: #f0f7ff;
+    }
+
+    .image-upload.has-image {
+      border: 2px solid #48bb78;
+      background: #f0fff4;
+    }
+
+    .image-preview {
+      max-width: 100%;
+      max-height: 120px;
+      display: none;
+      margin: 0 auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-text {
+      color: #4a5568;
+      margin: 12px 0;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .file-info {
+      display: block;
+      font-size: 12px;
+      color: #718096;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* Modal para mostrar el código */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid #f0f0f0;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #262626;
+      margin: 0;
+      background: linear-gradient(135deg, #024DDF, #0066FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      color: #4a5568;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: #e2e8f0;
+      color: #2d3748;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .view-indicator {
+      background: #f8fafc;
+      color: #4a5568;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid #e2e8f0;
+    }
+
+    .code-container {
+      background: #f8fafc;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #e2e8f0;
+      margin-bottom: 20px;
+    }
+
+    .code-display {
+      padding: 20px;
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #4a5568;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #ffffff;
+      margin: 0;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .copy-btn {
+      background: #024DDF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    .copy-btn:hover {
+      background: #0239c4;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(2, 77, 223, 0.3);
+    }
+
+    .instructions {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .instructions-title {
+      font-weight: 600;
+      color: #024DDF;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .instructions-text {
+      color: #4a5568;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Panel de botones inferiores */
+    .button-panel {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      border-top: 2px solid #f1f5f9;
+      padding-top: 24px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .main-layout {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .editor-column,
+      .preview-column {
+        flex: none;
+        min-width: auto;
+      }
+
+      .cms-panel {
+        position: relative;
+        top: auto;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+
+      .cms-button {
+        width: 100%;
+      }
+      
+      .form-row {
+        flex-direction: column;
+      }
+    }
+
+    /* Campo de logo condicional */
+    .logo-upload-section {
+      display: none;
+    }
+
+    .logo-upload-section.show {
+      display: block;
+    }
+
+    .form-group.required label::after {
+      content: " *";
+      color: #e53e3e;
+      font-weight: 700;
+      margin-left: 2px;
+    }
+
+    .validation-error {
+      color: #e53e3e;
+      font-size: 13px;
+      margin-top: 6px;
+      display: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .validation-error::before {
+      content: "⚠";
+      font-size: 14px;
+    }
+
+    .validation-error.show {
+      display: flex;
+    }
+
+    /* Toast de confirmación */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      min-width: 350px;
+      background: #EFF8EC;
+      border: 1px solid #01A469;
+      border-radius: 4px;
+      padding: 16px 20px;
+      box-shadow: 0px 4px 6px 0px rgba(1, 1, 1, 0.04), 0px 10px 15px 0px rgba(28, 124, 52, 0.1);
+      display: none;
+      animation: slideInRight 0.3s ease-out;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    .toast-content {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .toast-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .toast-text {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1.7em;
+      color: #353D55;
+      margin: 0 0 2px 0;
+    }
+
+    .toast-message {
+      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 1.43em;
+      color: #353D55;
+      margin: 0;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    .toast.hide {
+      animation: slideOutRight 0.3s ease-in forwards;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Panel CMS para Botones de Venta</h1>
+    
+    <div class="main-layout">
+      <div class="editor-column">
+        <div class="cms-panel">
+          <h2 class="cms-panel-title">Editor de Botón de Venta</h2>
+          
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="button-type">Tipo de Venta</label>
+                <select id="button-type">
+                  <option value="interbank">Venta Interbank</option>
+                  <option value="ticketmaster">Venta General</option>
+                  <option value="custom">Venta Personalizada</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="button-status">Estado</label>
+                <select id="button-status">
+                  <option value="available">Disponible</option>
+                  <option value="soon">Próximamente</option>
+                  <option value="soldout">Agotado</option>
+                  <option value="canceled">Cancelado</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="button-title">Título</label>
+                <input type="text" id="button-title" value="VENTA INTERBANK">
+              </div>
+            </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="sale-date">Inicio de Venta</label>
+                <input type="text" id="sale-date" value="01/04 • 14:30">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="button-text">Texto del Botón</label>
+                <input type="text" id="button-text" value="Ver Detalles">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="button-link">Link de Redirección</label>
+                <input type="url" id="button-link" placeholder="https://ejemplo.com/comprar" value="https://ticketmaster.cl/event/123">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Campo para subir imagen del logo (solo para tipos de venta personalizados) -->
+          <div class="form-group logo-upload-section" id="logo-upload-section">
+            <label for="logo-upload">Imagen del Logo (máx. 1MB, 640x640px)</label>
+            <div class="image-upload" id="logo-upload-container">
+              <input type="file" id="logo-upload" accept="image/*" style="display: none;">
+              <label for="logo-upload" style="cursor: pointer;">
+                <div class="upload-text">Haz clic para subir un logo o arrastra y suelta aquí</div>
+                <img id="logo-preview" class="image-preview">
+                <span class="file-info">Formatos: JPG, PNG, SVG. Tamaño máximo: 1MB</span>
+              </label>
+            </div>
+            <div class="validation-error" id="logo-validation-error">
+              El logo es obligatorio para este tipo de venta.
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <button id="apply-changes" class="cms-button cms-button-primary">
+              Aplicar Cambios
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-column">
+        <div class="preview-container">
+          <h2 class="cms-title">Vista Previa</h2>
+          
+          <!-- Controles de visualización -->
+          <div class="view-controls">
+            <div class="view-toggle">
+              <button class="view-toggle-btn active" id="desktop-view-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M14 2H2C1.44772 2 1 2.44772 1 3V10C1 10.5523 1.44772 11 2 11H14C14.5523 11 15 10.5523 15 10V3C15 2.44772 14.5523 2 14 2Z"/>
+                  <path d="M5 13H11V14H5V13Z"/>
+                </svg>
+                Desktop
+              </button>
+              <button class="view-toggle-btn" id="mobile-view-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M10 2H6C5.44772 2 5 2.44772 5 3V13C5 13.5523 5.44772 14 6 14H10C10.5523 14 11 13.5523 11 13V3C11 2.44772 10.5523 2 10 2Z"/>
+                </svg>
+                Mobile
+              </button>
+            </div>
+          </div>
+          
+          <!-- Vista de botón de venta con fondo gris -->
+          <div class="preview-background">
+            <!-- Vista Desktop (por defecto) -->
+            <div class="preview-desktop" id="preview-desktop">
+              <div class="tmpe-ticket-item" id="preview-ticket">
+                <div class="tmpe-logo-container tmpe-logo-interbank" id="preview-logo">
+                  <img class="tmpe-logo-img" id="preview-logo-img" src="https://prod-assets.tmlat.com/interbank_svg_f81dc84322.svg" alt="Logo">
+                </div>
+                <div class="tmpe-info-container">
+                  <h2 class="tmpe-ticket-title" id="preview-title">VENTA INTERBANK</h2>
+                  <div class="tmpe-status-container">
+                    <div class="tmpe-status-badge">
+                      <span class="tmpe-status-dot tmpe-dot-soon" id="preview-status-dot"></span>
+                      <span id="preview-status-text">PRÓXIMAMENTE</span>
+                    </div>
+                    <span class="tmpe-date-text" id="preview-date">Inicio de venta: 01/04 • 14:30</span>
+                  </div>
+                </div>
+                <a href="#" class="tmpe-link-details" id="preview-button">
+                  Ver Detalles
+                  <svg width="20" height="20" viewBox="0 0 20 20" id="preview-icon">
+                    <polyline points="7 5 13 10 7 15" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+            
+            <!-- Vista Mobile (oculta por defecto) - ACTUALIZADA SEGÚN INDEX4.HTML -->
+            <div class="preview-mobile" id="preview-mobile" style="display: none;">
+              <div class="tmpe-ticket-item" id="preview-ticket-mobile">
+                <a href="#" class="tmpe-ticket-link">
+                  <div class="tmpe-logo-container tmpe-logo-interbank" id="preview-logo-mobile">
+                    <img class="tmpe-logo-img" id="preview-logo-img-mobile" src="https://prod-assets.tmlat.com/interbank_svg_f81dc84322.svg" alt="Logo">
+                  </div>
+                  <div class="tmpe-info-container">
+                    <h2 class="tmpe-ticket-title" id="preview-title-mobile">VENTA INTERBANK</h2>
+                    <div class="tmpe-status-container">
+                      <span class="tmpe-date-text" id="preview-date-mobile">Inicio de venta: 01/04 • 14:30</span>
+                      <div class="tmpe-status-badge">
+                        <span class="tmpe-status-dot tmpe-dot-soon" id="preview-status-dot-mobile"></span>
+                        <span id="preview-status-text-mobile">PRÓXIMAMENTE</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tmpe-link-mobile">
+                    <img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);">
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Panel de botones inferiores -->
+          <div class="button-panel">
+            <button id="show-code" class="cms-button cms-button-secondary">
+              Mostrar Código
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast de confirmación -->
+  <div class="toast" id="success-toast">
+    <div class="toast-content">
+      <svg class="toast-icon" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="10" fill="#2DC653"/>
+        <path d="M6 10L8.5 12.5L14 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="toast-text">
+        <div class="toast-title">Los cambios han sido actualizados</div>
+        <div class="toast-message">La configuración del botón se ha guardado correctamente</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal para mostrar el código -->
+  <div class="modal-overlay" id="code-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Código del Botón</h2>
+        <button class="modal-close" id="close-modal">&times;</button>
+      </div>
+      
+      <div class="instructions">
+        <div class="instructions-title">Instrucciones de uso</div>
+        <div class="instructions-text">
+          Copia y pega este código HTML en tu sitio web donde quieras mostrar el botón de venta.
+        </div>
+      </div>
+      
+      <div class="code-header">
+        <span id="current-view-indicator" class="view-indicator">Vista: Desktop</span>
+        <button class="copy-btn" id="copy-code">
+          Copiar Código
+        </button>
+      </div>
+      
+      <div class="code-container">
+        <pre class="code-display" id="code-display">
+          <!-- El código se generará dinámicamente -->
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elementos del panel de control
+    const buttonType = document.getElementById('button-type');
+    const buttonStatus = document.getElementById('button-status');
+    const buttonTitle = document.getElementById('button-title');
+    const saleDate = document.getElementById('sale-date');
+    const buttonText = document.getElementById('button-text');
+    const buttonLink = document.getElementById('button-link');
+    const applyChanges = document.getElementById('apply-changes');
+    const logoUpload = document.getElementById('logo-upload');
+    const logoPreview = document.getElementById('logo-preview');
+    const logoUploadContainer = document.getElementById('logo-upload-container');
+    const logoUploadSection = document.getElementById('logo-upload-section');
+    const logoValidationError = document.getElementById('logo-validation-error');
+    
+    // Elementos de la vista previa
+    const previewLogo = document.getElementById('preview-logo');
+    const previewLogoImg = document.getElementById('preview-logo-img');
+    const previewTitle = document.getElementById('preview-title');
+    const previewStatusDot = document.getElementById('preview-status-dot');
+    const previewStatusText = document.getElementById('preview-status-text');
+    const previewDate = document.getElementById('preview-date');
+    const previewButton = document.getElementById('preview-button');
+    const previewIcon = document.getElementById('preview-icon');
+    
+    // Elementos de la vista previa móvil
+    const previewLogoMobile = document.getElementById('preview-logo-mobile');
+    const previewLogoImgMobile = document.getElementById('preview-logo-img-mobile');
+    const previewTitleMobile = document.getElementById('preview-title-mobile');
+    const previewStatusDotMobile = document.getElementById('preview-status-dot-mobile');
+    const previewStatusTextMobile = document.getElementById('preview-status-text-mobile');
+    const previewDateMobile = document.getElementById('preview-date-mobile');
+    const previewButtonMobile = document.querySelector('.tmpe-link-mobile');
+    
+    // Elementos del control de vista
+    const desktopViewBtn = document.getElementById('desktop-view-btn');
+    const mobileViewBtn = document.getElementById('mobile-view-btn');
+    const previewDesktop = document.getElementById('preview-desktop');
+    const previewMobile = document.getElementById('preview-mobile');
+    
+    // Elementos del modal de código
+    const showCodeButton = document.getElementById('show-code');
+    const codeModal = document.getElementById('code-modal');
+    const closeModal = document.getElementById('close-modal');
+    const codeDisplay = document.getElementById('code-display');
+    const copyCodeButton = document.getElementById('copy-code');
+    const copyFeedback = document.getElementById('copy-feedback');
+    
+    // Recursos de imágenes
+    const logoUrls = {
+      interbank: 'https://prod-assets.tmlat.com/interbank_svg_f81dc84322.svg',
+      ticketmaster: 'https://prod-assets.tmlat.com/T_9318699a9f.svg',
+      custom: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iNCIgZmlsbD0iIzAyNERERiIvPgo8cGF0aCBkPSJNMjAgMTBWMzBNMTAgMjBIMzAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo='
+    };
+
+    // Tipos de venta que tienen logo predefinido
+    const predefinedLogos = ['interbank', 'ticketmaster'];
+    
+    // Estado => Texto y clase CSS
+    const statusMap = {
+      available: {
+        text: 'DISPONIBLE',
+        dotClass: 'tmpe-dot-available',
+        buttonClass: 'available'
+      },
+      soon: {
+        text: 'PRÓXIMAMENTE',
+        dotClass: 'tmpe-dot-soon',
+        buttonClass: 'disabled'
+      },
+      soldout: {
+        text: 'AGOTADO',
+        dotClass: 'tmpe-dot-soldout',
+        buttonClass: 'disabled'
+      },
+      canceled: {
+        text: 'CANCELADO',
+        dotClass: 'tmpe-dot-canceled',
+        buttonClass: 'canceled'
+      }
+    };
+    
+    // Control de cambio de vista (desktop/mobile)
+    desktopViewBtn.addEventListener('click', function() {
+      desktopViewBtn.classList.add('active');
+      mobileViewBtn.classList.remove('active');
+      previewDesktop.style.display = 'block';
+      previewMobile.style.display = 'none';
+    });
+    
+    mobileViewBtn.addEventListener('click', function() {
+      mobileViewBtn.classList.add('active');
+      desktopViewBtn.classList.remove('active');
+      previewMobile.style.display = 'block';
+      previewDesktop.style.display = 'none';
+    });
+    
+    // Función para mostrar/ocultar campo de logo según tipo de venta
+    function toggleLogoUpload() {
+      const type = buttonType.value;
+      const needsCustomLogo = !predefinedLogos.includes(type);
+      
+      if (needsCustomLogo) {
+        logoUploadSection.classList.add('show');
+        logoUploadSection.querySelector('label').classList.add('required');
+        
+        // Mostrar mensaje específico según el tipo
+        if (type === 'custom') {
+          logoUploadSection.querySelector('label').textContent = 'Imagen del Logo (OBLIGATORIO - máx. 1MB, 640x640px)';
+        } else {
+          logoUploadSection.querySelector('label').textContent = 'Imagen del Logo (máx. 1MB, 640x640px)';
+        }
+      } else {
+        logoUploadSection.classList.remove('show');
+        logoUploadSection.querySelector('label').classList.remove('required');
+        logoValidationError.classList.remove('show');
+      }
+    }
+
+    // Función para validar si se puede aplicar cambios
+    function validateForm() {
+      const type = buttonType.value;
+      const needsCustomLogo = !predefinedLogos.includes(type);
+      
+      if (needsCustomLogo && (!logoUpload.files || !logoUpload.files[0])) {
+        if (type === 'custom') {
+          logoValidationError.textContent = 'El logo es OBLIGATORIO para Venta Personalizada.';
+        } else {
+          logoValidationError.textContent = 'El logo es obligatorio para este tipo de venta.';
+        }
+        logoValidationError.classList.add('show');
+        return false;
+      }
+      
+      logoValidationError.classList.remove('show');
+      return true;
+    }
+
+    // Event listener para cambio de tipo de venta
+    buttonType.addEventListener('change', function() {
+      toggleLogoUpload();
+      updatePreviews();
+    });
+    
+    // Gestión de subida de imágenes
+    logoUpload.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        // Validar tamaño (máx. 1MB)
+        if (file.size > 1024 * 1024) {
+          alert('La imagen es demasiado grande. El tamaño máximo permitido es 1MB.');
+          logoUpload.value = '';
+          return;
+        }
+        
+        // Validar dimensiones
+        const img = new Image();
+        img.onload = function() {
+          // Verificar dimensiones (máx. 640x640)
+          if (img.width > 640 || img.height > 640) {
+            alert('Las dimensiones de la imagen son demasiado grandes. El tamaño máximo permitido es 640x640px.');
+            logoUpload.value = '';
+            URL.revokeObjectURL(img.src);
+            return;
+          }
+          
+          // Mostrar la vista previa
+          logoPreview.src = img.src;
+          logoPreview.style.display = 'block';
+          logoUploadContainer.classList.add('has-image');
+          
+          // Actualizar la vista previa del botón en ambas vistas
+          previewLogoImg.src = img.src;
+          previewLogoImgMobile.src = img.src;
+        };
+        
+        img.onerror = function() {
+          alert('No se puede cargar la imagen. Por favor, intenta con otra.');
+          logoUpload.value = '';
+        };
+        
+        img.src = URL.createObjectURL(file);
+      }
+    });
+    
+    // Permitir arrastrar y soltar archivos
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      logoUploadContainer.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    logoUploadContainer.addEventListener('dragenter', function() {
+      this.style.borderColor = '#024DDF';
+    });
+    
+    logoUploadContainer.addEventListener('dragleave', function() {
+      this.style.borderColor = '#D6D6D6';
+    });
+    
+    logoUploadContainer.addEventListener('drop', function(e) {
+      this.style.borderColor = '#D6D6D6';
+      const dt = e.dataTransfer;
+      const file = dt.files[0];
+      
+      if (file) {
+        logoUpload.files = dt.files;
+        const event = new Event('change');
+        logoUpload.dispatchEvent(event);
+      }
+    });
+    
+    // Función para actualizar las vistas previa (desktop y mobile)
+    function updatePreviews() {
+      // Actualizar logo según el tipo de venta
+      const type = buttonType.value;
+      const status = buttonStatus.value;
+      
+      // Desktop
+      if (type === 'interbank') {
+        previewLogo.className = 'tmpe-logo-container tmpe-logo-interbank';
+      } else {
+        previewLogo.className = 'tmpe-logo-container tmpe-logo-ticketmaster';
+      }
+      
+      // Mobile
+      if (type === 'interbank') {
+        previewLogoMobile.className = 'tmpe-logo-container tmpe-logo-interbank';
+      } else {
+        previewLogoMobile.className = 'tmpe-logo-container tmpe-logo-ticketmaster';
+      }
+      
+      // Actualizar imagen del logo
+      if (logoUpload.files && logoUpload.files[0]) {
+        // Usar imagen personalizada subida
+        const objectUrl = URL.createObjectURL(logoUpload.files[0]);
+        previewLogoImg.src = objectUrl;
+        previewLogoImgMobile.src = objectUrl;
+      } else if (predefinedLogos.includes(type)) {
+        // Usar logo predefinido
+        previewLogoImg.src = logoUrls[type];
+        previewLogoImgMobile.src = logoUrls[type];
+      } else {
+        // Usar icono de ejemplo para tipos que requieren logo personalizado
+        previewLogoImg.src = logoUrls[type] || logoUrls.custom;
+        previewLogoImgMobile.src = logoUrls[type] || logoUrls.custom;
+      }
+      
+      // Actualizar título
+      previewTitle.textContent = buttonTitle.value;
+      previewTitleMobile.textContent = buttonTitle.value;
+      
+      // Actualizar estado
+      previewStatusText.textContent = statusMap[status].text;
+      previewStatusTextMobile.textContent = statusMap[status].text;
+      
+      // Actualizar el color del punto de estado
+      previewStatusDot.className = `tmpe-status-dot ${statusMap[status].dotClass}`;
+      previewStatusDotMobile.className = `tmpe-status-dot ${statusMap[status].dotClass}`;
+      
+      // Actualizar fecha
+      previewDate.textContent = `Inicio de venta: ${saleDate.value}`;
+      previewDateMobile.textContent = `Inicio de venta: ${saleDate.value}`;
+      
+      // Actualizar texto del botón y estado (solo para desktop)
+      previewButton.textContent = buttonText.value;
+      
+      // Actualizar link del botón
+      previewButton.href = buttonLink.value || '#';
+      
+      // Actualizar clase del botón según estado (desktop)
+      if (status === 'soon') {
+        // Para próximamente, mostrar botón especial "Recordármelo"
+        previewButton.className = 'tmpe-link-reminder';
+        previewButton.innerHTML = '<img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);"> Recordármelo';
+      } else {
+        previewButton.className = 'tmpe-link-details ' + statusMap[status].buttonClass;
+        previewButton.textContent = buttonText.value;
+        
+        // Siempre mostrar icono en desktop (excepto para Recordármelo)
+        if (!previewButton.contains(previewIcon)) {
+          previewButton.appendChild(previewIcon);
+        }
+        
+        // Actualizar color del icono según estado
+        if (status === 'canceled') {
+          previewIcon.querySelector('polyline').setAttribute('stroke', '#024DDF');
+        } else if (status === 'soldout') {
+          previewIcon.querySelector('polyline').setAttribute('stroke', '#949494');
+        } else {
+          previewIcon.querySelector('polyline').setAttribute('stroke', '#fff');
+        }
+      }
+      
+      // Actualizar link del botón móvil
+      const mobileLink = document.querySelector('#preview-mobile .tmpe-ticket-link');
+      if (mobileLink) {
+        mobileLink.href = buttonLink.value || '#';
+      }
+
+      // Actualizar clase del botón móvil según estado
+      if (status === 'soon') {
+        // Para próximamente en móvil, mostrar icono de campana oficial
+        previewButtonMobile.className = 'tmpe-link-mobile soon';
+        previewButtonMobile.innerHTML = '<img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);">';
+      } else {
+        previewButtonMobile.className = 'tmpe-link-mobile ' + statusMap[status].buttonClass;
+        previewButtonMobile.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        
+        // Actualizar color del icono según estado en móvil
+        const mobileSvg = previewButtonMobile.querySelector('svg path');
+        if (mobileSvg) {
+          if (status === 'canceled') {
+            mobileSvg.setAttribute('stroke', '#024DDF');
+          } else if (status === 'soldout') {
+            mobileSvg.setAttribute('stroke', 'white');
+          } else {
+            mobileSvg.setAttribute('stroke', 'white');
+          }
+        }
+      }
+    }
+    
+    // Elementos de la interfaz
+    const successToast = document.getElementById('success-toast');
+
+    // Función para mostrar el toast de éxito
+    function showSuccessToast() {
+      successToast.classList.remove('hide');
+      successToast.classList.add('show');
+      
+      // Auto-ocultar después de 4 segundos
+      setTimeout(() => {
+        hideSuccessToast();
+      }, 4000);
+    }
+
+    // Función para ocultar el toast
+    function hideSuccessToast() {
+      successToast.classList.add('hide');
+      setTimeout(() => {
+        successToast.classList.remove('show', 'hide');
+      }, 300);
+    }
+
+    // Función para aplicar los cambios
+    applyChanges.addEventListener('click', function() {
+      if (validateForm()) {
+        // Mostrar estado de carga
+        applyChanges.disabled = true;
+        applyChanges.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="animation: spin 1s linear infinite;"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="24" stroke-dashoffset="12"/></svg> Aplicando cambios...';
+        
+        setTimeout(() => {
+          updatePreviews();
+          
+          // Restaurar botón
+          applyChanges.disabled = false;
+          applyChanges.innerHTML = 'Aplicar Cambios';
+          
+          // Mostrar toast de éxito
+          showSuccessToast();
+        }, 800);
+      }
+    });
+    
+    // Modal para mostrar el código
+    showCodeButton.addEventListener('click', function() {
+      // Recoger la configuración actual del CMS
+      const config = {
+        type: buttonType.value,
+        status: buttonStatus.value,
+        title: buttonTitle.value,
+        date: saleDate.value,
+        buttonText: buttonText.value,
+        link: buttonLink.value || '#',
+        customLogo: logoUpload.files && logoUpload.files[0] ? URL.createObjectURL(logoUpload.files[0]) : null
+      };
+      
+      // Determinar cuál vista está activa
+      const isDesktopActive = desktopViewBtn.classList.contains('active');
+      const currentViewIndicator = document.getElementById('current-view-indicator');
+      currentViewIndicator.textContent = isDesktopActive ? 'Vista: Desktop' : 'Vista: Mobile';
+      
+      // Generar el código HTML completo
+      const fullCode = generateCompleteCode(config);
+      
+      // Mostrar el código en el modal
+      codeDisplay.textContent = fullCode;
+      
+      // Mostrar el modal
+      codeModal.style.display = 'flex';
+    });
+    
+    // Cerrar el modal
+    closeModal.addEventListener('click', function() {
+      codeModal.style.display = 'none';
+    });
+    
+    // Cerrar el modal si se hace clic fuera del contenido
+    window.addEventListener('click', function(e) {
+      if (e.target === codeModal) {
+        codeModal.style.display = 'none';
+      }
+    });
+    
+    // Copiar el código al portapapeles
+    copyCodeButton.addEventListener('click', function() {
+      // Obtener el código del textarea de código mostrado
+      const codeText = codeDisplay.textContent;
+      
+      // Crear un elemento textarea temporal
+      const textarea = document.createElement('textarea');
+      textarea.value = codeText;
+      
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      
+      // Mostrar confirmación
+      const originalText = copyCodeButton.textContent;
+      copyCodeButton.textContent = '¡Copiado!';
+      copyCodeButton.style.background = '#048851';
+      
+      setTimeout(function() {
+        copyCodeButton.textContent = originalText;
+        copyCodeButton.style.background = '#024DDF';
+      }, 2000);
+    });
+    
+    // Inicializar estado
+    document.addEventListener('DOMContentLoaded', function() {
+      // Configurar estado inicial
+      toggleLogoUpload();
+      // Aplicar los cambios iniciales a ambas vistas
+      updatePreviews();
+    });
+
+    // Función para generar código HTML y CSS completo
+    function generateCompleteCode(config) {
+      // Determinar logo según tipo
+      let logoUrl, logoClass;
+      if (config.type === 'interbank') {
+        logoUrl = 'https://prod-assets.tmlat.com/interbank_svg_f81dc84322.svg';
+        logoClass = 'tmpe-logo-interbank';
+      } else if (config.type === 'ticketmaster') {
+        logoUrl = 'https://prod-assets.tmlat.com/T_9318699a9f.svg';
+        logoClass = 'tmpe-logo-ticketmaster';
+      } else {
+        logoUrl = config.customLogo || 'https://via.placeholder.com/56x56';
+        logoClass = 'tmpe-logo-custom';
+      }
+
+      const statusConfig = {
+        available: { text: 'DISPONIBLE', dot: 'tmpe-dot-available', buttonClass: 'available' },
+        soon: { text: 'PRÓXIMAMENTE', dot: 'tmpe-dot-soon', buttonClass: 'soon' },
+        soldout: { text: 'AGOTADO', dot: 'tmpe-dot-soldout', buttonClass: 'disabled' },
+        canceled: { text: 'CANCELADO', dot: 'tmpe-dot-canceled', buttonClass: 'canceled' }
+      };
+
+      const currentStatus = statusConfig[config.status];
+      
+      // Generar botón desktop según estado
+      let desktopButton;
+      if (config.status === 'soon') {
+        desktopButton = '<div class="tmpe-link-reminder"><img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);">Recordármelo</div>';
+      } else if (config.status === 'canceled') {
+        desktopButton = '<a href="' + config.link + '" class="tmpe-link-details" style="background: white; color: #024DDF; border: 1px solid #024DDF;">' + config.buttonText + '<svg width="20" height="20" viewBox="0 0 20 20"><polyline points="7 5 13 10 7 15" fill="none" stroke="#024DDF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>';
+      } else if (config.status === 'soldout') {
+        desktopButton = '<a href="' + config.link + '" class="tmpe-link-details" style="background: #EBEBEB; color: #949494; cursor: not-allowed;">' + config.buttonText + '<svg width="20" height="20" viewBox="0 0 20 20"><polyline points="7 5 13 10 7 15" fill="none" stroke="#949494" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>';
+      } else {
+        desktopButton = '<a href="' + config.link + '" class="tmpe-link-details">' + config.buttonText + '<svg width="20" height="20" viewBox="0 0 20 20"><polyline points="7 5 13 10 7 15" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>';
+      }
+      
+      // Generar botón móvil según estado
+      let mobileButton;
+      if (config.status === 'soon') {
+        mobileButton = '<div class="tmpe-link-mobile" style="background: #FFF; border: 0.818px solid #D6D6D6; border-radius: 350px; box-shadow: 0px 4.909px 9.818px 0px rgba(0, 0, 0, 0.06);"><img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon" style="filter: brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(96%) contrast(85%);"></div>';
+      } else if (config.status === 'canceled') {
+        mobileButton = '<div class="tmpe-link-mobile" style="background: white; border: 1px solid #024DDF;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="#024DDF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+      } else if (config.status === 'soldout') {
+        mobileButton = '<div class="tmpe-link-mobile" style="background: #949494;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+      } else {
+        mobileButton = '<div class="tmpe-link-mobile"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+      }
+
+      // Construir CSS con colores actualizados
+      const cssStyles = '.tmpe-container * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Averta", "Helvetica Neue", Helvetica, Arial, sans-serif; } .tmpe-container { width: 800px !important; max-width: 800px !important; margin: 0 auto !important; background: #FAFBFC; position: relative; z-index: 1; box-sizing: border-box !important; overflow: hidden !important; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15) !important; } @media (max-width: 800px) { .tmpe-container { width: 100% !important; } } .tmpe-desktop-view { display: block; } .tmpe-mobile-view { display: none; } .tmpe-ticket-item { display: flex; align-items: center; padding: 20px 24px; background: #fff; border-bottom: 1px solid #D6D6D6; position: relative; justify-content: space-between; gap: 24px; transition: background-color 0.2s ease; } .tmpe-logo-container { width: 56px; height: 56px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; } .tmpe-logo-interbank { background: #1A1A1A; } .tmpe-logo-ticketmaster { background: #0744BD; } .tmpe-logo-custom { background: #f0f0f0; border: 1px solid #d0d0d0; } .tmpe-logo-img { width: 65%; height: 65%; object-fit: contain; } .tmpe-info-container { flex: 1; } .tmpe-container .tmpe-ticket-title { font-family: "Averta", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 20px; font-style: normal; font-weight: 700; margin-bottom: 8px; color: #262626; letter-spacing: 0.4px; line-height: 20px; } .tmpe-container .tmpe-date-text { font-family: "Averta", "Helvetica Neue", Helvetica, Arial, sans-serif; color: #7D7D7D; font-size: 16px; font-weight: 400; letter-spacing: 0.32px; line-height: 20px; } .tmpe-status-container { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; } .tmpe-container .tmpe-status-badge { font-family: "Averta", "Helvetica Neue", Helvetica, Arial, sans-serif; display: flex; align-items: center; gap: 4px; border: 1px solid #D6D6D6; border-radius: 4px; padding: 4px 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; height: 22px; letter-spacing: 0.24px; line-height: 20px; } .tmpe-status-dot { width: 10px; height: 10px; border-radius: 50%; } .tmpe-dot-available { background: #048851; } .tmpe-dot-soon { background: #646464; } .tmpe-dot-soldout { background: #DD2C00; } .tmpe-dot-canceled { background: #646464; } .tmpe-container .tmpe-link-details { font-family: "Averta", "Helvetica Neue", Helvetica, Arial, sans-serif; background: #024DDF; color: white; border: none; border-radius: 4px; padding: 16px 40px; font-size: 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin-left: auto; text-decoration: none; letter-spacing: 0.32px; line-height: 24px; height: 48px; min-width: 150px; justify-content: center; transition: background-color 0.2s ease; } .tmpe-link-reminder { background: #FFFFFF; color: #646464; border: 1px solid #D6D6D6; border-radius: 23px; padding: 6px 12px; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; margin-left: auto; text-decoration: none; box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.06); height: 39px; min-width: auto; justify-content: center; font-family: "Averta", "Helvetica Neue", Helvetica, Arial, sans-serif; } .tmpe-link-mobile { width: 40px; height: 40px; border-radius: 50%; background: #024DDF; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; color: white; text-decoration: none; transition: background-color 0.2s ease; }';
+      
+      const responsiveCSS = ' @media (max-width: 768px) { .tmpe-desktop-view { display: none; } .tmpe-mobile-view { display: block; box-shadow: 0px 1px 4px 0px rgba(18, 18, 18, 0.15); } .tmpe-ticket-item { padding: 0; gap: 0; align-items: stretch; } .tmpe-ticket-link { display: flex; width: 100%; padding: 20px 12px; gap: 16px; align-items: flex-start; text-decoration: none !important; color: inherit; cursor: pointer; } .tmpe-logo-container { width: 42px; height: 40px; margin-right: 0; border-radius: 2.68px; margin-top: 0; align-self: flex-start; } .tmpe-container .tmpe-ticket-title { font-size: 18px; line-height: 20px; letter-spacing: 0.32px; color: #121212; margin-bottom: 2px; } .tmpe-container .tmpe-date-text { font-size: 14px; margin-left: 0; line-height: 20px; letter-spacing: 0.28px; color: #828282; } .tmpe-status-container { flex-direction: column; align-items: flex-start; gap: 4px; } .tmpe-container .tmpe-status-badge { font-size: 12px; letter-spacing: 0.24px; line-height: 20px; color: #121212; } .tmpe-link-mobile { width: 36px; height: 36px; background: #024DDF; border-radius: 50%; display: flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 0; } } @media (min-width: 769px) { .tmpe-ticket-item:hover { background-color: #F6F6F6; } .tmpe-link-details:hover { background-color: #0035A0; } } @media (max-width: 768px) { .tmpe-ticket-link:hover, .tmpe-ticket-link:active { background-color: #F6F6F6; } .tmpe-ticket-link:hover .tmpe-link-mobile, .tmpe-ticket-link:active .tmpe-link-mobile { background-color: #0035A0; } }';
+
+      return '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Botón de Venta - ' + config.title + '</title><style>' + cssStyles + responsiveCSS + '</style></head><body><div class="tmpe-container"><div class="tmpe-desktop-view"><div class="tmpe-ticket-item"><div class="tmpe-logo-container ' + logoClass + '"><img class="tmpe-logo-img" src="' + logoUrl + '" alt="Logo"></div><div class="tmpe-info-container"><h2 class="tmpe-ticket-title">' + config.title + '</h2><div class="tmpe-status-container"><div class="tmpe-status-badge"><span class="tmpe-status-dot ' + currentStatus.dot + '"></span><span>' + currentStatus.text + '</span></div><span class="tmpe-date-text">Inicio de venta: ' + config.date + '</span></div></div>' + desktopButton + '</div></div><div class="tmpe-mobile-view"><div class="tmpe-ticket-item">' + (config.status === 'soon' ? '<div class="tmpe-ticket-link" style="cursor: default;">' : '<a href="' + config.link + '" class="tmpe-ticket-link">') + '<div class="tmpe-logo-container ' + logoClass + '"><img class="tmpe-logo-img" src="' + logoUrl + '" alt="Logo"></div><div class="tmpe-info-container"><h2 class="tmpe-ticket-title">' + config.title + '</h2><div class="tmpe-status-container"><span class="tmpe-date-text">Inicio de venta ' + config.date + '</span><div class="tmpe-status-badge"><span class="tmpe-status-dot ' + currentStatus.dot + '"></span><span>' + currentStatus.text + '</span></div></div></div>' + mobileButton + (config.status === 'soon' ? '</div>' : '</a>') + '</div></div></div></body></html>';
+    }
+  </script>
+</body>
+</html> 

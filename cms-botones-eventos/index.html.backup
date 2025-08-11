@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Botones - Gestión Múltiple</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Averta', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #262626;
+      background: linear-gradient(135deg, #024DDF, #0066FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    /* Layout principal de dos paneles */
+    #app-container {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      flex: 1;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.06);
+      border: 1px solid #f0f0f0;
+    }
+
+    #left-panel {
+      flex: 0 0 400px;
+      min-width: 350px;
+    }
+
+    #right-panel {
+      flex: 1;
+      min-width: 500px;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .panel-header {
+      padding: 24px 24px 16px 24px;
+      border-bottom: 2px solid #f0f0f0;
+      margin-bottom: 24px;
+    }
+
+    .panel-title {
+      font-size: 20px;
+      color: #1a1a1a;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-content {
+      padding: 0 24px 24px 24px;
+    }
+
+    /* Estilos para la gestión de botones */
+    #add-new-button {
+      width: 100%;
+      padding: 16px 24px;
+      background: #024DDF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    #add-new-button:hover {
+      background: #0239c4;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(2, 77, 223, 0.3);
+    }
+
+    /* Lista de botones */
+    #button-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .button-item {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .button-item:hover {
+      border-color: #024DDF;
+      background: #f0f7ff;
+    }
+
+    .button-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .button-item-info {
+      flex: 1;
+    }
+
+    .button-item-title {
+      font-weight: 600;
+      color: #1a1a1a;
+      font-size: 16px;
+      margin: 0 0 8px 0;
+    }
+
+    .button-item-status {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+
+    .status-available { background: #e6fffa; color: #048851; }
+    .status-soon { background: #f7fafc; color: #646464; }
+    .status-soldout { background: #fed7d7; color: #DD2C00; }
+    .status-canceled { background: #f7fafc; color: #646464; }
+
+    .button-item-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-edit, .btn-delete {
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      min-width: auto;
+    }
+
+    .btn-edit {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+
+    .btn-edit:hover {
+      background: #cbd5e0;
+      color: #2d3748;
+    }
+
+    .btn-delete {
+      background: #fed7d7;
+      color: #DD2C00;
+    }
+
+    .btn-delete:hover {
+      background: #feb2b2;
+      color: #c53030;
+    }
+
+    /* Formulario de edición (oculto por defecto) */
+    #button-editor-form {
+      display: none;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2d3748;
+      font-size: 14px;
+    }
+
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #ffffff;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #024DDF;
+      box-shadow: 0 0 0 3px rgba(2, 77, 223, 0.1);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-col {
+      flex: 1;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-save, .btn-cancel {
+      flex: 1;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-save {
+      background: #024DDF;
+      color: white;
+    }
+
+    .btn-save:hover {
+      background: #0239c4;
+    }
+
+    .btn-cancel {
+      background: #f8fafc;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+    }
+
+    .btn-cancel:hover {
+      background: #e2e8f0;
+    }
+
+    /* Previsualización global */
+    .view-controls {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .view-toggle {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .view-toggle-btn {
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #64748b;
+      transition: all 0.2s ease;
+      min-width: 100px;
+      justify-content: center;
+    }
+
+    .view-toggle-btn:hover {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .view-toggle-btn.active {
+      background: #024DDF;
+      color: white;
+      box-shadow: 0 2px 4px rgba(2, 77, 223, 0.2);
+    }
+
+    /* Área de previsualización */
+    #preview-area {
+      background-color: #e2e2e2;
+      padding: 20px;
+      border-radius: 8px;
+      min-height: 200px;
+    }
+
+    #preview-area.preview-mobile-mode {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 10px;
+    }
+
+    #preview-area .tmpe-ticket-item {
+      margin-bottom: 0;
+    }
+
+    #preview-area .tmpe-ticket-item + .tmpe-ticket-item {
+      border-top: none;
+    }
+
+    #show-code-button {
+      width: 100%;
+      padding: 16px 24px;
+      background: #f8fafc;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 1002;
+    }
+
+    #show-code-button:hover {
+      background: #e2e8f0;
+      color: #2d3748;
+      border-color: #cbd5e0;
+    }
+
+    /* Estilos para botones de venta renderizados */
+    .tmpe-ticket-item {
+      display: flex;
+      align-items: center;
+      padding: 20px 24px;
+      background: #fff;
+      border-bottom: 1px solid #D6D6D6;
+      position: relative;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+    
+    }
+
+    /* Vista desktop por defecto */
+    .tmpe-desktop-view {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    /* Vista mobile oculta por defecto */
+    .tmpe-mobile-view {
+      display: none;
+      width: 100%;
+    }
+
+    /* En mobile, ocultar desktop y mostrar mobile */
+    @media (max-width: 768px) {
+      .tmpe-desktop-view {
+        display: none;
+      }
+      
+      .tmpe-mobile-view {
+        display: block;
+      }
+      
+      .tmpe-ticket-item {
+        padding: 0;
+        gap: 0;
+        align-items: stretch;
+      }
+      
+      .tmpe-ticket-link {
+        display: flex;
+        width: 100%;
+        padding: 20px 12px;
+        gap: 16px;
+        align-items: flex-start;
+        text-decoration: none !important;
+        color: inherit;
+        cursor: pointer;
+      }
+      
+      .tmpe-ticket-link:hover,
+      .tmpe-ticket-link:active {
+        background-color: #F6F6F6;
+      }
+      
+      .tmpe-mobile-view .tmpe-logo-container {
+        width: 42px;
+        height: 40px;
+        border-radius: 2.68px;
+        align-self: flex-start;
+      }
+      
+      .tmpe-mobile-view .tmpe-ticket-title {
+        font-size: 18px;
+        line-height: 20px;
+        letter-spacing: 0.32px;
+        color: #121212;
+        margin-bottom: 2px;
+      }
+      
+      .tmpe-mobile-view .tmpe-date-text {
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.28px;
+        color: #828282;
+      }
+      
+      .tmpe-mobile-view .tmpe-status-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      
+      .tmpe-mobile-view .tmpe-status-badge {
+        font-size: 12px;
+        letter-spacing: 0.24px;
+        line-height: 20px;
+        color: #121212;
+      }
+    }
+
+    .tmpe-logo-container {
+      width: 56px;
+      height: 56px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .tmpe-logo-interbank { background: #1A1A1A; }
+    .tmpe-logo-ticketmaster { background: #0744BD; }
+    .tmpe-logo-custom { background: #000000; border: none; }
+
+    .tmpe-logo-img {
+      width: 65%;
+      height: 65%;
+      object-fit: contain;
+    }
+
+    .tmpe-info-container {
+      flex: 1;
+    }
+
+    .tmpe-ticket-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #262626;
+      letter-spacing: 0.4px;
+      line-height: 20px;
+    }
+
+    .tmpe-date-text {
+      color: #7D7D7D;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0.32px;
+      line-height: 20px;
+    }
+
+    .tmpe-status-container {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tmpe-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid #D6D6D6;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      height: 22px;
+      letter-spacing: 0.24px;
+      line-height: 20px;
+    }
+
+    .tmpe-status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .tmpe-dot-available { background: #048851; }
+    .tmpe-dot-soon { background: #646464; }
+    .tmpe-dot-soldout { background: #DD2C00; }
+    .tmpe-dot-canceled { background: #646464; }
+
+    .tmpe-link-details {
+      background: #024DDF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 16px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-left: auto;
+      text-decoration: none;
+      letter-spacing: 0.32px;
+      line-height: 24px;
+      height: 48px;
+      min-width: 150px;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .tmpe-link-details.available {
+      background: #024DDF;
+      color: white;
+    }
+
+    .tmpe-link-details.canceled {
+      background: white;
+      color: #024DDF;
+      border: 1px solid #024DDF;
+    }
+
+    .tmpe-link-details.disabled {
+      background: #EBEBEB;
+      color: #949494;
+      cursor: not-allowed;
+    }
+
+    .tmpe-link-reminder {
+      background: #FFFFFF;
+      color: #646464;
+      border: 1px solid #D6D6D6;
+      border-radius: 23px;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      margin-left: auto;
+      text-decoration: none;
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.06);
+      height: 39px;
+      min-width: auto;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .tmpe-link-mobile {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #024DDF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+      align-self: flex-start;
+    }
+
+    /* Modal para código */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+
+    /* Modal del editor de botones con z-index menor */
+    #button-editor-modal {
+      z-index: 999;
+    }
+
+    /* #button-editor-modal.show {
+      display: flex !important;
+    } */
+
+    /* Modal del código con z-index mayor */
+    #code-modal {
+      z-index: 1001;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #262626;
+      margin: 0;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      color: #4a5568;
+    }
+
+    .code-container {
+      background: #f8fafc;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #e2e8f0;
+      margin-bottom: 20px;
+    }
+
+    .code-display {
+      padding: 20px;
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #4a5568;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #ffffff;
+      margin: 0;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .copy-btn {
+      background: #024DDF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: #0239c4;
+    }
+
+    /* Estados vacíos */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #64748b;
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #475569;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      #app-container {
+        flex-direction: column;
+      }
+
+      #left-panel {
+        flex: none;
+        min-width: auto;
+      }
+
+      #right-panel {
+        flex: none;
+        min-width: auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+    }
+
+    /* Controles de vista manual */
+    .preview-desktop-mode .tmpe-desktop-view {
+      display: flex;
+    }
+    
+    .preview-desktop-mode .tmpe-mobile-view {
+      display: none;
+    }
+    
+    .preview-mobile-mode .tmpe-desktop-view {
+      display: none;
+    }
+    
+    .preview-mobile-mode .tmpe-mobile-view {
+      display: block;
+    }
+    
+    .preview-mobile-mode .tmpe-ticket-item {
+      padding: 0;
+      gap: 0;
+      align-items: stretch;
+    }
+    
+    .preview-mobile-mode .tmpe-ticket-link {
+      display: flex;
+      width: 380px;
+      max-width: 380px;
+      margin: 0 auto;
+      padding: 20px 12px;
+      gap: 16px;
+      align-items: flex-start;
+      text-decoration: none !important;
+      color: inherit;
+      cursor: pointer;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0px 1px 4px 0px rgba(18, 18, 18, 0.15);
+    }
+    
+    .preview-mobile-mode .tmpe-ticket-link:hover,
+    .preview-mobile-mode .tmpe-ticket-link:active {
+      background-color: #F6F6F6;
+    }
+    
+    .preview-mobile-mode .tmpe-mobile-view .tmpe-logo-container {
+      width: 42px;
+      height: 40px;
+      border-radius: 2.68px;
+      align-self: flex-start;
+    }
+    
+    .preview-mobile-mode .tmpe-mobile-view .tmpe-ticket-title {
+      font-size: 18px;
+      line-height: 20px;
+      letter-spacing: 0.32px;
+      color: #121212;
+      margin-bottom: 2px;
+    }
+    
+    .preview-mobile-mode .tmpe-mobile-view .tmpe-date-text {
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0.28px;
+      color: #828282;
+    }
+    
+    .preview-mobile-mode .tmpe-mobile-view .tmpe-status-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    
+    .preview-mobile-mode .tmpe-mobile-view .tmpe-status-badge {
+      font-size: 12px;
+      letter-spacing: 0.24px;
+      line-height: 20px;
+      color: #121212;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CMS Botones de Venta - Gestión Múltiple</h1>
+    
+    <div id="app-container">
+      <!-- Panel Izquierdo: Gestión de Botones -->
+      <div id="left-panel" class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Gestión de Botones</h2>
+        </div>
+        <div class="panel-content">
+          <!-- Botón para agregar nuevo -->
+          <button id="add-new-button">
+            + Agregar Nuevo Botón
+          </button>
+          
+          <!-- Lista de botones -->
+          <div id="button-list-container">
+            <!-- Los botones se renderizarán aquí dinámicamente -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Derecho: Previsualización Global -->
+      <div id="right-panel" class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Previsualización Global</h2>
+        </div>
+        <div class="panel-content">
+          <!-- Controles de vista -->
+          <div class="view-controls">
+            <div class="view-toggle">
+              <button class="view-toggle-btn active" id="desktop-view-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M14 2H2C1.44772 2 1 2.44772 1 3V10C1 10.5523 1.44772 11 2 11H14C14.5523 11 15 10.5523 15 10V3C15 2.44772 14.5523 2 14 2Z"/>
+                  <path d="M5 13H11V14H5V13Z"/>
+                </svg>
+                Desktop
+              </button>
+              <button class="view-toggle-btn" id="mobile-view-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M10 2H6C5.44772 2 5 2.44772 5 3V13C5 13.5523 5.44772 14 6 14H10C10.5523 14 11 13.5523 11 13V3C11 2.44772 10.5523 2 10 2Z"/>
+                </svg>
+                Mobile
+              </button>
+            </div>
+          </div>
+          
+          <!-- Área de previsualización -->
+          <div id="preview-area">
+            <div class="empty-state">
+              <h3>No hay botones creados</h3>
+              <p>Agrega tu primer botón usando el panel de la izquierda</p>
+            </div>
+          </div>
+            
+          <!-- Botón para mostrar código -->
+          <button id="show-code-button" title="Mostrar código (Ctrl/Cmd + K)">
+            📋 Mostrar Código de Todos los Botones
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para crear/editar botón -->
+  <div class="modal-overlay" id="button-editor-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="form-title">Crear Nuevo Botón</h2>
+        <button class="modal-close" id="close-button-modal">&times;</button>
+      </div>
+      
+      <form id="button-editor-form">
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="button-type">Tipo de Venta</label>
+              <select id="button-type" required>
+                <option value="">Seleccionar tipo</option>
+                <option value="interbank">Venta Interbank</option>
+                <option value="ticketmaster">Venta General</option>
+                <option value="custom">Venta Personalizada</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-col">
+            <div class="form-group">
+              <label for="button-status">Estado</label>
+              <select id="button-status" required>
+                <option value="">Seleccionar estado</option>
+                <option value="available">Disponible</option>
+                <option value="soon">Próximamente</option>
+                <option value="soldout">Agotado</option>
+                <option value="canceled">Cancelado</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="button-title">Título</label>
+              <input type="text" id="button-title" placeholder="VENTA INTERBANK" required>
+            </div>
+          </div>
+          <div class="form-col">
+            <div class="form-group">
+              <label for="sale-date">Inicio de Venta</label>
+              <input type="text" id="sale-date" placeholder="01/04 • 14:30" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" id="custom-logo-group" style="display: none;">
+          <label for="custom-logo-url">URL del Logo Personalizado</label>
+          <input type="url" id="custom-logo-url" placeholder="https://ejemplo.com/logo.png">
+        </div>
+        
+        <div class="form-group">
+          <label for="button-text">Texto del Botón</label>
+          <input type="text" id="button-text" placeholder="Comprar ahora" value="Comprar ahora" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="button-link">Link de Redirección</label>
+          <input type="url" id="button-link" placeholder="https://ejemplo.com/comprar" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" id="save-button" class="btn-save">Guardar</button>
+          <button type="button" id="cancel-button" class="btn-cancel">Cancelar</button>
+          <button type="button" id="show-code-from-modal" class="copy-btn" style="margin-top: 10px; width: 100%;">
+            📋 Mostrar Código de Todos los Botones
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal para mostrar el código -->
+  <div class="modal-overlay" id="code-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Código HTML/CSS Completo</h2>
+        <button class="modal-close" id="close-modal">&times;</button>
+      </div>
+      
+      <div class="code-container">
+        <pre class="code-display" id="code-display">
+          <!-- El código se generará dinámicamente -->
+        </pre>
+      </div>
+      
+      <button class="copy-btn" id="copy-code">
+        📋 Copiar Código
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Array global para almacenar los botones
+    let buttons = [];
+    let editingButtonId = null;
+
+    // Elementos del DOM
+    const addNewButton = document.getElementById('add-new-button');
+    const buttonListContainer = document.getElementById('button-list-container');
+    const buttonEditorModal = document.getElementById('button-editor-modal');
+    const buttonEditorForm = document.getElementById('button-editor-form');
+    const formTitle = document.getElementById('form-title');
+    const saveButton = document.getElementById('save-button');
+    const cancelButton = document.getElementById('cancel-button');
+    const closeButtonModal = document.getElementById('close-button-modal');
+    const previewArea = document.getElementById('preview-area');
+    const showCodeButton = document.getElementById('show-code-button');
+    const codeModal = document.getElementById('code-modal');
+    const closeModal = document.getElementById('close-modal');
+    const codeDisplay = document.getElementById('code-display');
+    const copyCodeButton = document.getElementById('copy-code');
+
+    // Elementos del formulario
+    const buttonType = document.getElementById('button-type');
+    const buttonStatus = document.getElementById('button-status');
+    const buttonTitle = document.getElementById('button-title');
+    const saleDate = document.getElementById('sale-date');
+    const buttonText = document.getElementById('button-text');
+    const buttonLink = document.getElementById('button-link');
+    const customLogoUrl = document.getElementById('custom-logo-url');
+    const customLogoGroup = document.getElementById('custom-logo-group');
+
+    // Elementos de los botones de vista
+    const desktopViewBtn = document.getElementById('desktop-view-btn');
+    const mobileViewBtn = document.getElementById('mobile-view-btn');
+
+    // Variable para tracking de la vista actual
+    let currentView = 'desktop';
+
+    // Configuración de estados
+    const statusConfig = {
+      available: { text: 'DISPONIBLE', class: 'status-available', dotClass: 'tmpe-dot-available', buttonClass: 'available' },
+      soon: { text: 'PRÓXIMAMENTE', class: 'status-soon', dotClass: 'tmpe-dot-soon', buttonClass: 'soon' },
+      soldout: { text: 'AGOTADO', class: 'status-soldout', dotClass: 'tmpe-dot-soldout', buttonClass: 'disabled' },
+      canceled: { text: 'CANCELADO', class: 'status-canceled', dotClass: 'tmpe-dot-canceled', buttonClass: 'canceled' }
+    };
+
+    // URLs de logos
+    const logoUrls = {
+      interbank: 'https://prod-assets.tmlat.com/interbank_svg_f81dc84322.svg',
+      ticketmaster: 'https://prod-assets.tmlat.com/T_9318699a9f.svg',
+      custom: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iNCIgZmlsbD0iIzAyNERERiIvPgo8cGF0aCBkPSJNMjAgMTBWMzBNMTAgMjBIMzAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo='
+    };
+
+    // Función para cargar botones desde localStorage
+    function loadButtons() {
+      const saved = localStorage.getItem('cms-buttons');
+      if (saved) {
+        buttons = JSON.parse(saved);
+      }
+    }
+
+    // Función para guardar botones en localStorage
+    function saveButtons() {
+      localStorage.setItem('cms-buttons', JSON.stringify(buttons));
+    }
+
+    // Función para renderizar la lista de botones
+    function renderButtonList() {
+      buttonListContainer.innerHTML = '';
+      
+      if (buttons.length === 0) {
+        buttonListContainer.innerHTML = `
+          <div class="empty-state">
+            <h3>No hay botones creados</h3>
+            <p>Haz clic en "Agregar Nuevo Botón" para comenzar</p>
+          </div>
+        `;
+        return;
+      }
+
+      buttons.forEach(button => {
+        const buttonItem = document.createElement('div');
+        buttonItem.className = 'button-item';
+        buttonItem.innerHTML = `
+          <div class="button-item-header">
+            <div class="button-item-info">
+              <h4 class="button-item-title">${button.title}</h4>
+              <span class="button-item-status ${statusConfig[button.status].class}">
+                ${statusConfig[button.status].text}
+              </span>
+            </div>
+            <div class="button-item-actions">
+              <button class="btn-edit" data-id="${button.id}">✏️ Editar</button>
+              <button class="btn-delete" data-id="${button.id}">🗑️ Eliminar</button>
+            </div>
+          </div>
+        `;
+        
+        buttonListContainer.appendChild(buttonItem);
+      });
+
+      // Agregar event listeners a los botones de acción
+      document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const buttonId = e.target.getAttribute('data-id');
+          openButtonEditor(buttonId);
+        });
+      });
+
+      document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const buttonId = e.target.getAttribute('data-id');
+          deleteButton(buttonId);
+        });
+      });
+    }
+
+    // Función para cerrar el editor
+    function closeButtonEditor() {
+      buttonEditorModal.style.display = 'none';
+      editingButtonId = null;
+    }
+
+    // Función para abrir el editor de botones
+    function openButtonEditor(buttonId = null) {
+      editingButtonId = buttonId;
+      
+      // Mostrar modal
+      buttonEditorModal.style.display = 'flex';
+
+      if (buttonId) {
+        // Modo edición
+        const button = buttons.find(b => b.id === buttonId);
+        if (button) {
+          formTitle.textContent = `Editar: ${button.title}`;
+          buttonType.value = button.type;
+          buttonStatus.value = button.status;
+          buttonTitle.value = button.title;
+          saleDate.value = button.date;
+          buttonText.value = button.buttonText;
+          buttonLink.value = button.link;
+          
+          // Manejar logo personalizado
+          if (button.type === 'custom' && button.customLogoUrl) {
+            customLogoUrl.value = button.customLogoUrl;
+          }
+          
+          // Actualizar visibilidad del campo de logo
+          handleTypeChange();
+        }
+      } else {
+        // Modo creación
+        formTitle.textContent = 'Crear Nuevo Botón';
+        buttonType.value = '';
+        buttonStatus.value = '';
+        buttonTitle.value = '';
+        saleDate.value = '';
+        buttonText.value = 'Comprar ahora';
+        buttonLink.value = '';
+        customLogoUrl.value = '';
+        
+        // Ocultar campo de logo personalizado
+        customLogoGroup.style.display = 'none';
+        customLogoUrl.required = false;
+      }
+    }
+
+    // Función para guardar botón con validación
+    function saveButtonData(e) {
+      e.preventDefault();
+      
+      // Validar campos obligatorios
+      if (!buttonType.value || !buttonStatus.value || !buttonTitle.value || 
+          !saleDate.value || !buttonText.value || !buttonLink.value) {
+        alert('Todos los campos son obligatorios');
+        return;
+      }
+      
+      // Validar logo personalizado si es necesario
+      if (buttonType.value === 'custom' && !customLogoUrl.value) {
+        alert('El URL del logo personalizado es obligatorio para venta personalizada');
+        return;
+      }
+
+      const buttonData = {
+        type: buttonType.value,
+        status: buttonStatus.value,
+        title: buttonTitle.value,
+        date: saleDate.value,
+        buttonText: buttonText.value,
+        link: buttonLink.value,
+        customLogoUrl: buttonType.value === 'custom' ? customLogoUrl.value : null
+      };
+
+      if (editingButtonId) {
+        // Actualizar botón existente
+        const index = buttons.findIndex(b => b.id === editingButtonId);
+        if (index !== -1) {
+          buttons[index] = { ...buttons[index], ...buttonData };
+        }
+      } else {
+        // Crear nuevo botón
+        const newButton = {
+          id: Date.now().toString(),
+          ...buttonData
+        };
+        buttons.push(newButton);
+      }
+
+      saveButtons();
+      closeButtonEditor();
+      renderButtonList();
+      renderGlobalPreview();
+    }
+
+    // Función para eliminar botón
+    function deleteButton(buttonId) {
+      if (confirm('¿Estás seguro de eliminar este botón?')) {
+        buttons = buttons.filter(b => b.id !== buttonId);
+        saveButtons();
+        renderButtonList();
+        renderGlobalPreview();
+      }
+    }
+
+    // Función para cambiar vista
+    function switchView(view) {
+      currentView = view;
+      
+      // Actualizar estado de botones
+      if (view === 'desktop') {
+        desktopViewBtn.classList.add('active');
+        mobileViewBtn.classList.remove('active');
+        previewArea.classList.remove('preview-mobile-mode');
+        previewArea.classList.add('preview-desktop-mode');
+      } else {
+        desktopViewBtn.classList.remove('active');
+        mobileViewBtn.classList.add('active');
+        previewArea.classList.remove('preview-desktop-mode');
+        previewArea.classList.add('preview-mobile-mode');
+      }
+    }
+
+    // Función para renderizar la previsualización global
+    function renderGlobalPreview() {
+      if (buttons.length === 0) {
+        previewArea.innerHTML = `
+          <div class="empty-state">
+            <h3>No hay botones creados</h3>
+            <p>Agrega tu primer botón usando el panel de la izquierda</p>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '';
+      buttons.forEach(button => {
+        html += generateButtonHTML(button);
+      });
+      
+      previewArea.innerHTML = html;
+      
+      // Aplicar clase de vista actual
+      if (currentView === 'mobile') {
+        previewArea.classList.add('preview-mobile-mode');
+        previewArea.classList.remove('preview-desktop-mode');
+      } else {
+        previewArea.classList.add('preview-desktop-mode');
+        previewArea.classList.remove('preview-mobile-mode');
+      }
+    }
+
+    // Función para generar HTML de un botón individual
+    function generateButtonHTML(button) {
+      const status = statusConfig[button.status];
+      
+      // Determinar logo según tipo
+      let logoUrl, logoClass;
+      if (button.type === 'custom') {
+        logoUrl = button.customLogoUrl || logoUrls.custom;
+        logoClass = 'tmpe-logo-custom';
+      } else if (button.type === 'interbank') {
+        logoUrl = 'https://prod-assets.tmlat.com/interbank_svg_f81dc84322.svg';
+        logoClass = 'tmpe-logo-interbank';
+      } else if (button.type === 'ticketmaster') {
+        logoUrl = 'https://prod-assets.tmlat.com/T_9318699a9f.svg';
+        logoClass = 'tmpe-logo-ticketmaster';
+      } else {
+        logoUrl = logoUrls.custom;
+        logoClass = 'tmpe-logo-custom';
+      }
+
+      let buttonElement;
+      if (button.status === 'soon') {
+        buttonElement = `
+          <button class="tmpe-link-reminder">
+            <img src="https://prod-assets.tmlat.com/Bell_efe9ad8429.svg" width="16" height="16" alt="Bell icon">
+            Recordármelo
+          </button>
+        `;
+      } else {
+        buttonElement = `
+          <a href="${button.link}" target="_blank" class="tmpe-link-details ${status.buttonClass}">
+            ${button.buttonText}
+          </a>
+        `;
+      }
+
+      return `
+        <div class="tmpe-ticket-item">
+          <div class="tmpe-desktop-view">
+            <div class="tmpe-logo-container ${logoClass}">
+              <img src="${logoUrl}" alt="Logo" class="tmpe-logo-img">
+            </div>
+            <div class="tmpe-info-container">
+              <h3 class="tmpe-ticket-title">${button.title}</h3>
+              <p class="tmpe-date-text">${button.date}</p>
+              <div class="tmpe-status-container">
+                <span class="tmpe-status-badge">
+                  <span class="tmpe-status-dot ${status.dotClass}"></span>
+                  ${status.text}
+                </span>
+              </div>
+            </div>
+            ${buttonElement}
+          </div>
+          <div class="tmpe-mobile-view">
+            <a href="${button.link}" target="_blank" class="tmpe-ticket-link">
+              <div class="tmpe-logo-container ${logoClass}">
+                <img src="${logoUrl}" alt="Logo" class="tmpe-logo-img">
+              </div>
+              <div class="tmpe-info-container">
+                <h3 class="tmpe-ticket-title">${button.title}</h3>
+                <p class="tmpe-date-text">${button.date}</p>
+                <div class="tmpe-status-container">
+                  <span class="tmpe-status-badge">
+                    <span class="tmpe-status-dot ${status.dotClass}"></span>
+                    ${status.text}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    // Event listeners
+    addNewButton.addEventListener('click', () => openButtonEditor());
+    buttonEditorForm.addEventListener('submit', saveButtonData);
+    cancelButton.addEventListener('click', closeButtonEditor);
+    closeButtonModal.addEventListener('click', closeButtonEditor);
+    desktopViewBtn.addEventListener('click', () => switchView('desktop'));
+    mobileViewBtn.addEventListener('click', () => switchView('mobile'));
+    showCodeButton.addEventListener('click', () => codeModal.style.display = 'flex');
+    closeModal.addEventListener('click', () => codeModal.style.display = 'none');
+    copyCodeButton.addEventListener('click', () => {
+      const code = codeDisplay.textContent;
+      navigator.clipboard.writeText(code);
+      alert('Código copiado al portapapeles');
+    });
+
+    // Inicializar
+    loadButtons();
+    renderButtonList();
+    renderGlobalPreview();
+  </script>
+</body>
+</html>
